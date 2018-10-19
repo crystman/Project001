@@ -1,4 +1,8 @@
+-- Global properties
 Objects = {}
+timer = nil
+input = nil
+
 local RequiresTree = {}
 local test = nil
 
@@ -27,11 +31,28 @@ end
 
 function love.load()
 	recursiveEnumerate('libraries')
-	requiredFiles({"Test"})
+	requiredFiles({"Timer", "Input"})
 
-	test = Objects["Test"].new(nil, {["text"] = "Hello World!"})
+	timer = Objects["Timer"]()
+	input = Objects["Input"]()
+
+    input:bind('space', 'space')
+
+	requiredFiles({"Test"})	
+end
+
+function love.update(dt)
+	timer:update(dt)
+
+	if input:pressed('space') then
+		test = Objects["Test"].new(nil, {["text"] = "Hello " .. love.timer.getTime()})
+	end
 end
 
 function love.draw()
-	test:draw()
+	if (test) then
+		test:draw()
+	else
+		love.graphics.print("Main", 400, 300)
+	end
 end
